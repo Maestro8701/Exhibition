@@ -1,0 +1,40 @@
+namespace AdPlatformService
+{
+
+    public class AdPlatformSearch
+    {
+
+        private readonly TrieNode _root;
+
+        public AdPlatformSearch(AdPlatformRepository adPlatform_repository)
+        {
+            _root = adPlatform_repository._root;
+        }
+
+        public List<string> GetPlatformsForLocation(string location)
+        {
+            var result = new HashSet<string>();
+
+            FindPlatforms(_root, location, result);
+
+            return result.ToList();
+        }
+
+        private void FindPlatforms(TrieNode node, string location, HashSet<string> result, string currentPath = "")
+        {
+            if (location.StartsWith(currentPath) || location.StartsWith(currentPath + "/") || currentPath == "")
+            {
+                foreach (var platform in node.Platforms)
+                {
+                    result.Add(platform);
+                }
+            }
+
+            foreach (var (ch, childNode) in node.Children)
+            {
+                FindPlatforms(childNode, location, result, currentPath + ch);
+            }
+        }
+
+    }
+}
