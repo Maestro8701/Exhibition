@@ -1,4 +1,3 @@
-
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -135,19 +134,14 @@ public:
         file.write(reinterpret_cast<const char*>(&infoHeader_), sizeof(infoHeader_));
         file.write(reinterpret_cast<const char*>(&colorTable_), sizeof(colorTable_));
 
-        const int emptyBytesCount = 52;
         unsigned char emptyBytes[52] = { 0 }; 
-        file.write(reinterpret_cast<const char*>(emptyBytes), emptyBytesCount);
-        
-
-        unsigned char padding[3] = { 0, 0, 0 }; // Паддинг
+        file.write(reinterpret_cast<const char*>(emptyBytes), 52);
+        unsigned char padding[3] = { 0, 0, 0 }; 
 
         for (int y = 0; y < height_; ++y) {
             file.write(reinterpret_cast<const char*>(&imageData_[y * width_ * (infoHeader_.biBitCount / 8)]), width_ * (infoHeader_.biBitCount / 8));
             file.write(reinterpret_cast<const char*>(padding), paddingSize_);
         }
-
-
 
         file.close();
         return true;
@@ -158,13 +152,6 @@ public:
         int centerY = height_ / 2;
         DrawLine(centerX, 0, centerX, height_ - 1, color_cross_);
         DrawLine(0, centerY, width_ - 1, centerY, color_cross_);
-    }
-
-    void closeBMP() {
-        if (isOpen_) {
-            imageData_.clear();
-            isOpen_ = false;
-        }
     }
 };
 
@@ -199,8 +186,6 @@ int main(int argc, char* argv[]) {
     else {
         std::cerr << "Не удалось сохранить BMP файл." << std::endl;
     }
-
-    drawer.closeBMP();
 
     return 0;
 }
