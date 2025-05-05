@@ -1,0 +1,4 @@
+Тестовые файлы приложены на которых работает приложение, приложение не супер универсальное адаптированно конкретно под этим изображения.
+Запуск
+1)В консоль пишем cd C:\Users\Evgenius\Desktop\TestWorkALL\CRESTBMP\BASE_MAIN\BMP_CREST_TWO\x64\Debug(к примеру)
+2)Далее пишем BMP_CREST_TWO.exe monkey.bmp или BMP_CREST_TWO.exe Face.bmp
