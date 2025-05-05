@@ -82,7 +82,10 @@ public:
         height_ = abs(infoHeader_.biHeight);
         paddingSize_ = (4 - (width_ * (infoHeader_.biBitCount / 8)) % 4) % 4;
         int imageSize = width_ * height_ * (infoHeader_.biBitCount / 8);
-        imageData_.resize(imageSize); 
+        imageData_.resize(imageSize);
+        if (imageData_.size() == 0) {
+            return false;
+        }
         file.seekg(fileHeader_.bfOffBits, std::ios::beg);
         unsigned char* pImageData = imageData_.data();
         for (int y = 0; y < height_; ++y) {
@@ -96,11 +99,6 @@ public:
     }
 
     void DisplayBMP() const {
-        if (imageData_.empty()) {
-            std::cout << "Изображение пустое." << std::endl;
-            return;
-        }
-
         for (int y = height_ - 1; y >= 0; --y) { 
             for (int x = 0; x < width_; ++x) {
                 size_t index = y * width_ * (infoHeader_.biBitCount / 8) + x * (infoHeader_.biBitCount / 8);
@@ -163,8 +161,7 @@ int main(int argc, char* argv[]) {
         drawer.DisplayBMP();
         drawer.DrawCross(); 
         drawer.DisplayBMP(); 
-    }
-    else {
+    } else {
         std::cerr << "Не удалось открыть BMP файл." << std::endl;
         return 1;
     }
