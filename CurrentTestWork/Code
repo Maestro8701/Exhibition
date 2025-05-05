@@ -19,7 +19,8 @@ private:
     int width_;
     int height_;
     int paddingSize_;
-    unsigned char color_cross_[3] = { 0, 0, 0 };
+    unsigned char colorCross_[3] = { 0, 0, 0 };
+    const int reserveBytes = 52;
 
     void DrawLine(int startX, int startY, int endX, int endY, unsigned char color[3]) {
         // Алгоритм Брезенхема для рисования линии
@@ -127,7 +128,7 @@ public:
         file.write(reinterpret_cast<const char*>(&infoHeader_), sizeof(infoHeader_));
         file.write(reinterpret_cast<const char*>(&colorTable_), sizeof(colorTable_));
         unsigned char emptyBytes[52] = { 0 }; 
-        file.write(reinterpret_cast<const char*>(emptyBytes), 52);
+        file.write(reinterpret_cast<const char*>(emptyBytes), reserveBytes);
         unsigned char padding[3] = { 0, 0, 0 }; 
 
         for (int y = 0; y < height_; ++y) {
@@ -142,8 +143,8 @@ public:
     void DrawCross() {
         int centerX = width_ / 2;
         int centerY = height_ / 2;
-        DrawLine(centerX, 0, centerX, height_ - 1, color_cross_);
-        DrawLine(0, centerY, width_ - 1, centerY, color_cross_);
+        DrawLine(centerX, 0, centerX, height_ - 1, colorCross_);
+        DrawLine(0, centerY, width_ - 1, centerY, colorCross_);
     }
 };
 
@@ -172,7 +173,7 @@ int main(int argc, char* argv[]) {
     nameFile += ".bmp";
 
     if (drawer.SaveBMP(nameFile)) {
-        std::cout << "Изображение успешно сохранено как " << nameFile << ".bmp" << std::endl;
+        std::cout << "Изображение успешно сохранено как " << nameFile << std::endl;
     } else {
         std::cerr << "Не удалось сохранить BMP файл." << std::endl;
     }
