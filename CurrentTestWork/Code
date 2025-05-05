@@ -20,7 +20,6 @@ private:
     int height_;
     int paddingSize_;
     unsigned char color_cross_[3] = { 0, 0, 0 };
-    bool isOpen_;
 
     void DrawLine(int startX, int startY, int endX, int endY, unsigned char color[3]) {
         // Алгоритм Брезенхема для рисования линии
@@ -35,7 +34,6 @@ private:
             if (startX == endX && startY == endY) break; // Если достигли конечной точки, выходим из цикла
 
             int errorDouble = error * 2; // Удваиваем значение ошибки для упрощения расчетов
-
             // Проверяем, нужно ли двигаться по оси X
             if (errorDouble > -deltaY) {
                 error -= deltaY; // Корректируем ошибку
@@ -60,9 +58,7 @@ private:
     }
 
 public:
-    //BMPDrawerCross() = default;
-
-    BMPDrawerCross() : isOpen_(false) {}
+    BMPDrawerCross() = default;
 
     ~BMPDrawerCross() = default;
     
@@ -96,13 +92,12 @@ public:
         }
 
         file.close();
-        isOpen_ = true;
         return true;
     }
 
     void DisplayBMP() const {
-        if (!isOpen_ || imageData_.empty()) {
-            std::cout << "Изображение не открыто или пустое." << std::endl;
+        if (imageData_.empty()) {
+            std::cout << "Изображение пустое." << std::endl;
             return;
         }
 
@@ -133,7 +128,6 @@ public:
         file.write(reinterpret_cast<const char*>(&fileHeader_), sizeof(fileHeader_));
         file.write(reinterpret_cast<const char*>(&infoHeader_), sizeof(infoHeader_));
         file.write(reinterpret_cast<const char*>(&colorTable_), sizeof(colorTable_));
-
         unsigned char emptyBytes[52] = { 0 }; 
         file.write(reinterpret_cast<const char*>(emptyBytes), 52);
         unsigned char padding[3] = { 0, 0, 0 }; 
@@ -182,8 +176,7 @@ int main(int argc, char* argv[]) {
 
     if (drawer.SaveBMP(nameFile)) {
         std::cout << "Изображение успешно сохранено как " << nameFile << ".bmp" << std::endl;
-    }
-    else {
+    } else {
         std::cerr << "Не удалось сохранить BMP файл." << std::endl;
     }
 
