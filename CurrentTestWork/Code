@@ -20,31 +20,35 @@ private:
     int height_;
     int paddingSize_;
     unsigned char colorCross_[3] = { 0, 0, 0 };
-    const int reserveBytes = 52;
+    const int reserveBytes_ = 52;
+    const int colorTableSize_ = 32;
 
+    //чтобы не путаться в цифрах итерации цикла расписанны сбоку  с разными примерами цифры к примеру вертикальная линия 3 1 3 4 подается на вход 
+    //2 пара цифр это вычисление горизонтальной линии 1 4 4 4, когда много цифр в уме могут возникать путаница так как все нужно держать в уме 
+    // поэтому я писал проверку алгоритма на примере одной итерации когда цифры физически прописанны убедиться в точной работе алгоритма проще
     void DrawLine(int startX, int startY, int endX, int endY, unsigned char color[3]) {
         // Алгоритм Брезенхема для рисования линии
-        int deltaX = abs(endX - startX); // Разница по оси X
-        int deltaY = abs(endY - startY); // Разница по оси Y
-        int stepX = (startX < endX) ? 1 : -1; // Шаг по оси X (1 или -1)
-        int stepY = (startY < endY) ? 1 : -1; // Шаг по оси Y (1 или -1)
-        int error = deltaX - deltaY; // Начальная ошибка
+        int deltaX = abs(endX - startX); // Разница по оси X // 3 - 3 = 0                           // 4 -1
+        int deltaY = abs(endY - startY); // Разница по оси Y // 4 - 1 = 3                           // 4 - 4
+        int stepX = (startX < endX) ? 1 : -1; // Шаг по оси X (1 или -1) // -1                      // 1
+        int stepY = (startY < endY) ? 1 : -1; // Шаг по оси Y (1 или -1) // 1                       // - 1
+        int error = deltaX - deltaY; // Начальная ошибка // 0 - 3 = -3                              // 3 - 0
 
         while (true) {
-            SetPixel(startX, startY, color); // Устанавливаем цвет пикселя в текущих координатах
+            SetPixel(startX, startY, color); // Устанавливаем цвет пикселя в текущих координатах  
             if (startX == endX && startY == endY) break; // Если достигли конечной точки, выходим из цикла
 
-            int errorDouble = error * 2; // Удваиваем значение ошибки для упрощения расчетов
+            int errorDouble = error * 2; // Удваиваем значение ошибки для упрощения расчетов // -6 //6
             // Проверяем, нужно ли двигаться по оси X
-            if (errorDouble > -deltaY) {
-                error -= deltaY; // Корректируем ошибку
-                startX += stepX; // Двигаемся по оси X
+            if (errorDouble > -deltaY) { // -6 > 3                                                 // 6 > 0
+                error -= deltaY; // Корректируем ошибку // не выполняется                          // 3 -= 0
+                startX += stepX; // Двигаемся по оси X  // не выполняется                          // 1 += 1
             }
 
             // Проверяем, нужно ли двигаться по оси Y
-            if (errorDouble < deltaX) {
-                error += deltaX; // Корректируем ошибку
-                startY += stepY; // Двигаемся по оси Y
+            if (errorDouble < deltaX) { // -6 < 0                                                  // 6 < 4
+                error += deltaX; // Корректируем ошибку // -3 += 0                                 // не выполняется 
+                startY += stepY; // Двигаемся по оси Y  // 1 += 1                                  // не выполняется 
             }
         }
     }
@@ -71,14 +75,8 @@ public:
         
         file.read(reinterpret_cast<char*>(&fileHeader_), sizeof(fileHeader_));
         file.read(reinterpret_cast<char*>(&infoHeader_), sizeof(infoHeader_));
-        colorTable_.resize(32);
+        colorTable_.resize(colorTableSize_);
         file.read(reinterpret_cast<char*>(&colorTable_), sizeof(colorTable_));
-
-        if (infoHeader_.biBitCount != 24 && infoHeader_.biBitCount != 32) {
-            file.close();
-            return false;
-        }
-
         width_ = infoHeader_.biWidth;
         height_ = abs(infoHeader_.biHeight);
         paddingSize_ = (4 - (width_ * (infoHeader_.biBitCount / 8)) % 4) % 4;
@@ -128,7 +126,7 @@ public:
         file.write(reinterpret_cast<const char*>(&infoHeader_), sizeof(infoHeader_));
         file.write(reinterpret_cast<const char*>(&colorTable_), sizeof(colorTable_));
         unsigned char emptyBytes[52] = { 0 }; 
-        file.write(reinterpret_cast<const char*>(emptyBytes), reserveBytes);
+        file.write(reinterpret_cast<const char*>(emptyBytes), reserveBytes_);
         unsigned char padding[3] = { 0, 0, 0 }; 
 
         for (int y = 0; y < height_; ++y) {
