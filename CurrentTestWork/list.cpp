@@ -117,7 +117,9 @@
 
     //Следущие 2 метода для проверки списка один сравнивает другой записывает в файл чтобы на глаз можно было проверить оба списка
     bool LinkedList::Compare(const std::vector<std::pair<std::string, int32_t>>& original) const {
-        if (nodes_.size() != original.size()) return false;
+        if (nodes_.size() != original.size()) {
+            return false;
+        }
 
         std::unordered_map<ListNode*, int32_t> ptr_to_idx;
         for (std::size_t i = 0; i < nodes_.size(); ++i) {
@@ -125,7 +127,9 @@
         }
 
         for (std::size_t i = 0; i < nodes_.size(); ++i) {
-            if (nodes_[i]->data != original[i].first) return false;
+            if (nodes_[i]->data != original[i].first) {
+                return false;
+            }
 
             int32_t current_rand_idx = -1;
             if (nodes_[i]->rand) {
@@ -135,7 +139,9 @@
                 }
             }
 
-            if (current_rand_idx != original[i].second) return false;
+            if (current_rand_idx != original[i].second) {
+                return false;
+            }
         }
         return true;
     }
@@ -148,6 +154,7 @@
         }
 
         std::unordered_map<ListNode*, int32_t> ptr_to_idx;
+        ptr_to_idx.reserve(nodes_.size());
         for (std::size_t i = 0; i < nodes_.size(); ++i) {
             ptr_to_idx[nodes_[i].get()] = i;
         }
