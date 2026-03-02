@@ -47,10 +47,10 @@
             return true;
         }
    
-        std::unordered_map<ListNode*, int32_t> ptr_to_idx;//?
+        std::unordered_map<ListNode*, int32_t> ptr_to_idx;
         ptr_to_idx.reserve(nodes_.size());
         for (std::size_t i = 0; i < nodes_.size(); ++i) {
-            ptr_to_idx[nodes_[i].get()] = static_cast<int32_t>(i);
+            ptr_to_idx[nodes_[i].get()] = i;
         }
 
        for (const auto& node : nodes_) {
@@ -67,6 +67,10 @@
         out.close();
         return true;
     }
+    
+    //Причина почему в коде используется тип uint64_t так как всегда занимает ровно 8 байт.
+    // Это значит, что файл, записанный на одном компьютере, будет корректно 
+    // прочитан на другом, даже если там другая разрядность системы.
 
     bool LinkedList::Deserialize(const std::string& filename) {
         nodes_.clear();
@@ -132,7 +136,7 @@
             }
 
             int32_t current_rand_idx = -1;
-            if (nodes_[i]->rand) {
+            if (nodes_[i]->rand) {//.
                 auto it = ptr_to_idx.find(nodes_[i]->rand);
                 if (it != ptr_to_idx.end()) {
                     current_rand_idx = it->second;
