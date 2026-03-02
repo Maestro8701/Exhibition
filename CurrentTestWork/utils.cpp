@@ -1,20 +1,22 @@
-#include <string>
-#include <vector>
+#include <iostream>
 #include <cstdint>
 #include <fstream>
-#include <iostream>
+#include <string>
+#include <vector>
 
 #include "utils.h"
 
 namespace parse {
 
     bool ParseLine(const std::string& line, std::string& out_data, int32_t& out_rand_index) {
-        std::size_t sep = line.rfind(';');
-        if (sep == std::string::npos) return false;
-
-        out_data = line.substr(0, sep);
-
         try {
+            std::size_t sep = line.rfind(';');
+            if (sep == std::string::npos) {
+                return false;
+            }
+
+            out_data = line.substr(0, sep);
+
             out_rand_index = std::stoi(line.substr(sep + 1));
         }
         catch (...) {
