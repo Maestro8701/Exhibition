@@ -6,9 +6,11 @@
 #include "utils.h"
 #include "list.h"
 
-
 int main() {
     setlocale(LC_ALL, "Russian");
+    //на стал усложнять 2 строки снизу можно перенести в отдельный файл конфига используя библиотеку tomlplusplus и cmake(скачивание и сборка через cmake)
+    //там можно добавить аргументы и два типа запуска первый стандартный где все работает нормально  и нет в main Compare и DumpText
+    // второй где Compare и DumpText присутствуют и запуск идет через другой файл(тут так не реализовано чтобы не усложнять)
     const std::string input_file = "inlet.in";
     const std::string output_file = "outlet.out";
 
